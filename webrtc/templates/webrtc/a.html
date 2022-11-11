@@ -1,0 +1,357 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<style type="text/css">
+	#video {
+  border: 1px solid black;
+}
+</style>
+<body>
+	<h1>hello</h1>
+	<video id="video" width="200" height="200" autoplay ></video>
+	<canvas id="canvas" height="200" width="200"></canvas>
+    <canvas id="canvas1" height="200" width="200"></canvas>
+    <br/>
+    <br/>
+    <img id="screen"  />
+    
+	<button id="screen">screen</button>
+    <script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@3.0.3/build/jsmpeg-player.min.js" integrity="sha256-WmJ8VaOGsXlbJuil3XMtO+8HpnDlVqbrqOq6UZIFPDg=" crossorigin="anonymous"></script>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js" integrity="sha512-0qU9M9jfqPw6FKkPafM3gy2CBAvUWnYVOfNPDYKVuRTel1PrciTj+a9P3loJB+j0QmN2Y0JYQmkBBS8W+mbezg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      const fileReader = new FileReader()
+
+      function fetchImage() {
+        new Promise((res, rej) => {
+          const url = "/screen_png?random=" + new Date().getTime()
+          var time = new Date().getTime()
+          axios.get(url, { responseType: 'blob' })
+            .then(function (response) {
+            //   document.getElementById('video').src = URL.createObjectURL(response.data)  
+                var fps = (10/(new Date().getTime() - time))
+                console.log(1/fps)
+            document.images["screen"].src = URL.createObjectURL(response.data) 
+              res(fetchImage())
+            })
+            .catch(function (error) { console.log(error) })
+        })
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchImage)
+      var lastCalledTime;
+var fps;
+
+function requestAnimFrame() {
+
+  if(!lastCalledTime) {
+     lastCalledTime = Date.now();
+     fps = 0;
+     return;
+  }
+  delta = (Date.now() - lastCalledTime)/1000;
+  lastCalledTime = Date.now();
+  fps = 1/delta;
+  console.log(fps)
+}
+    requestAnimFrame()
+    </script>
+<script type="text/javascript">
+
+
+	var websocket
+	
+	let loc = window.location
+	var endpoint = "ws://" + loc.host + loc.pathname
+	var videoin = document.getElementById('video')
+	websocket = new WebSocket(endpoint)
+
+	//websocket.binaryType = 'blob';
+	var options = {
+		mimeType:"video/webm;codecs=opus,vp8",
+		bitsPerSecond:5000
+	}
+	websocket.onopen = async function(e){
+        var abc = "hello"
+        // websocket.send(abc)
+        // class WorkIt{
+        //     constructor(){
+        //         this.grayscale = null
+        //         this.worker = new Worker('{%static "webrtc/grayscale.js"%}')
+        //         this.worker.addEventListener('message',(evt)=> this.doWorkerMessage(evt))
+                
+        //     }
+        // }
+//         var output = new Image()
+//         document.getElementById('screen').onclick=function(){
+//             navigator.mediaDevices.getDisplayMedia({
+//               audio: true,
+//               video:true
+//             }).then(function(stream) {
+//                 videoin.srcObject=stream
+//                 console.log(stream)
+//                 videoin.style.display="none"
+//                 //videoin.play()
+//             var ctx = canvas.getContext('2d');
+//             setInterval(begin,10)
+
+//             function begin() {
+//                 drawToCanvas()
+//                 //read()
+
+//             }
+
+//             async function drawToCanvas() {  
+//                 var canvas1 = document.getElementById("canvas1")
+//                 var ctx1 = canvas1.getContext('2d')              
+//               canvas.width = videoin.videoWidth;
+//               canvas.height = videoin.videoHeight;
+//               ctx.drawImage(videoin,0,0)
+//               canvas.style.display="none"
+//               let imgdata = ctx.getImageData(0,0,canvas.width,canvas.height)
+//               console.log(imgdata.data)
+//               ctx1.putImageData(imgdata,0,0)
+              
+//               //canvas.style.display="none"
+//               //var imageData = ctx.createImageData(canvas.width,canvas.height)
+//               //console.log(imageData)
+//               //const pixels = ctx.createImageData(canvas.width,canvas.height)
+//               //console.log(pixels)
+//               //ctx.putImageData(pixels,canvas.width,canvas.height)
+//               //websocket.send(pixels.data.buffer)
+              
+//               // var bitmap = await createImageBitmap(canvas)
+//               // ctx.drawImage(bitmap, 0, 0,canvas.width,canvas.height);
+//               //console.log(bitmap)
+              
+//               // const data = new Uint32Array(imageData.data.buffer)
+//               // ctx.putImageData(imageData,0,0)
+//               //requestAnimationFrame(drawToCanvas);
+//             }
+
+//             // function read(){
+//             //     var canvasData = canvas.toDataURL('image/gif',1)
+//             //     var decodeAsString = atob(canvasData.split(',')[1])
+//             //     var charArray = []
+
+//             //     for (var i=0;i<decodeAsString.length;i++){
+//             //         charArray.push(decodeAsString.charCodeAt(i))
+//             //     }
+//             //     websocket.send(new Blob([new Uint8Array(charArray)],{
+//             //         'type':'image/jpeg'
+//             //     }))
+//             // }
+//         })
+// 		// var audio;
+	
+// 		// //console.log('open')
+// 		// navigator.mediaDevices.getDisplayMedia({
+// 		//       audio: true,
+// 		//       video:true
+// 		//  },options).then(function(stream) {
+// 		//  	//console.log("stream",stream);
+// 	 //        mediaRecorder = new MediaRecorder(stream);
+// 	 //        mediaRecorder.ondataavailable = function (e) {
+//   //               //console.log(e.data)
+//   //               // websocket.send("user_1")
+//   //               // let utf8Encode = new TextEncoder();
+//   //               // var abc = utf8Encode.encode("abc")
+//   //               // console.log(abc)
+//   //               //websocket.send(e.data)
+//   //               websocket.send(e.data)
+// 	 //        };
+// 	 //        mediaRecorder.start(3000);
+
+// 		// })
+         
+//      }
+		
+// }
+
+// // var mediaSource = new MediaSource();
+// // var sourceBuffer;
+
+// // //var video = document.querySelector('#video');
+// // video.src = window.URL.createObjectURL(mediaSource);
+// // mediaSource.addEventListener('sourceopen', function (e) {
+// //     sourceBuffer = mediaSource.addSourceBuffer("video/webm;codecs=vp8");
+// //     sourceBuffer.mode="sequence"
+// //     //console.log(sourceBuffer)
+   
+// // }, false);
+// // video.play();
+}
+
+websocket.onmessage = async function (e) {
+    console.log(e.data)
+    document.images["screen"].src = URL.createObjectURL(e.data)
+    // var canvas = document.getElementById("canvas")
+    // var ctx = canvas.getContext('2d')
+
+    // videoin.style.display="none"
+    // canvas.style.display="none"
+    // var img = document.getElementById('image')
+    // img.src=window.URL.createObjectURL(e.data)
+    // //console.log(e.data)
+    // var reader = new FileReader();
+    // reader.addEventListener("loadend", function () {
+    //     //console.log(reader.result)
+    //     var arr = new Uint8Array(reader.result);
+    //     console.log(arr)
+    //     sourceBuffer.appendBuffer(arr);
+    //     //console.log(sourceBuffer)
+    // });
+    // reader.readAsArrayBuffer(e.data);
+	// var video1 = document.getElementById('video1')
+	// const blob = e.data;
+	// const url = URL.createObjectURL(blob);
+ //  	video1.src = url;
+	// var media,sourceBuffer,ws,data;
+	//console.log(JSON.parse(e.data))
+	//console.log(e.data)
+	//console.log(e.data)
+	//const ab = new ArrayBuffer(e.data.length);
+	// const buffer=e.data
+	// console.log(buffer)
+
+    //console.log(ws)
+    //console.log(e.data)
+    //onsole.log(ws)
+
+ //    data= new Uint8Array(e.data)
+ //    //const blob = new Blob([ws], { type: "audio/webm" });
+	// // video.src = window.URL.createObjectURL(blob);
+ //    //console.log(ws)
+ //    // for (let i = 0; i < e.data.length; ++i) {
+ //    //     data[i] = e.data[i];
+ //    // }
+ //    //console.log(data[0])
+ //        // if(data[0]===26&&data[1]===69&&data[2]===223){
+ //        // 	console.log(ws)
+ //        	//let buffer = await blob.arrayBuffer()
+ //        	//console.log(e.data)
+            
+        
+ //        if(media){
+ //            URL.revokeObjectURL(media)
+ //            sourceBuffer=null;  
+ //                 }
+        
+ //        media= new MediaSource();
+ //        video.src = URL.createObjectURL(media);
+ //        video.onloadedmetadata=function(e){
+ //            video.muted=false
+ //            video.play()
+
+ //        }
+        
+ //        media.onsourceopen=function(){
+	//         sourceBuffer= media.addSourceBuffer("video/webm;codecs=opus, vp8");
+	//         sourceBuffer.appendBuffer(data)
+	//         console.log(sourceBuffer.buffered)
+
+ //      }
+    // }
+        
+        // else {
+        // if(!media)return;
+        
+        //     sourceBuffer.appendBuffer(buffer)
+            
+        // }
+	// const mediaSource = new MediaSource()
+	// const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg')
+	// player.src = URL.createObjectURL(mediaSource)
+	// sourceBuffer.appendBuffer(e.data) // Repeat this for each chunk as ArrayBuffer
+	// player.play()
+	// var audioContext = new AudioContext();
+	// var audio = JSON.parse(e.data)
+	// let rawbuffer = new Float32Array(audio)
+	// console.log(audio)
+	// let audioBuffer = audioContext.createBuffer(1,rawbuffer.length,48000)
+	// //audioBuffer.copyToChannel(rawbuffer,0)
+	// audioBuffer.getChannelData(0).set(rawbuffer);
+	// var playSound = audioContext.createBufferSource()
+	// playSound.buffer = audioBuffer
+	// playSound.connect(audioContext.destination)
+	// playSound.start(2)
+
+
+}
+
+var SoundBuffer = /** @class */ (function () {
+    function SoundBuffer(ctx, sampleRate, bufferSize, debug) {
+        if (bufferSize === void 0) { bufferSize = 6; }
+        if (debug === void 0) { debug = true; }
+        this.ctx = ctx;
+        this.sampleRate = sampleRate;
+        this.bufferSize = bufferSize;
+        this.debug = debug;
+        this.chunks = [];
+        this.isPlaying = false;
+        this.startTime = 0;
+        this.lastChunkOffset = 0;
+    }
+    SoundBuffer.prototype.createChunk = function (chunk) {
+        var _this = this;
+        var audioBuffer = this.ctx.createBuffer(2, chunk.length, this.sampleRate);
+        audioBuffer.getChannelData(0).set(chunk);
+        var source = this.ctx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(this.ctx.destination);
+        source.onended = function (e) {
+            _this.chunks.splice(_this.chunks.indexOf(source), 1);
+            if (_this.chunks.length == 0) {
+                _this.isPlaying = false;
+                _this.startTime = 0;
+                _this.lastChunkOffset = 0;
+            }
+        };
+        return source;
+    };
+    SoundBuffer.prototype.log = function (data) {
+        if (this.debug) {
+            console.log(new Date().toUTCString() + " : " + data);
+        }
+    };
+    SoundBuffer.prototype.addChunk = function (data) {
+        if (this.isPlaying && (this.chunks.length > this.bufferSize)) {
+            this.log("chunk discarded");
+            return; // throw away
+        }
+        else if (this.isPlaying && (this.chunks.length <= this.bufferSize)) { // schedule & add right now
+            this.log("chunk accepted");
+            var chunk = this.createChunk(data);
+            chunk.start(this.startTime + this.lastChunkOffset);
+            this.lastChunkOffset += chunk.buffer.duration;
+            this.chunks.push(chunk);
+        }
+        else if ((this.chunks.length < (this.bufferSize / 2)) && !this.isPlaying) { // add & don't schedule
+            this.log("chunk queued");
+            var chunk = this.createChunk(data);
+            this.chunks.push(chunk);
+        }
+        else { // add & schedule entire buffer
+            this.log("queued chunks scheduled");
+            this.isPlaying = true;
+            var chunk = this.createChunk(data);
+            this.chunks.push(chunk);
+            this.startTime = this.ctx.currentTime;
+            this.lastChunkOffset = 0;
+            for (var i = 0; i < this.chunks.length; i++) {
+                var chunk_1 = this.chunks[i];
+                chunk_1.start(this.startTime + this.lastChunkOffset);
+                this.lastChunkOffset += chunk_1.buffer.duration;
+            }
+        }
+    };
+    return SoundBuffer;
+}());
+
+
+</script>
+</html>
