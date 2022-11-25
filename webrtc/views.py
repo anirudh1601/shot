@@ -104,7 +104,10 @@ def capture():
     return img
 
 
-
+left = 0
+right=2
+top=0
+btm=2
 def serve_pil_image(request):
     loop = time()
     # printscreen_pil =  ImageGrab.grab()
@@ -116,9 +119,10 @@ def serve_pil_image(request):
     # yield (b"--frame\r\nContent-Type:video/jpeg2000\r\n\r\n" + encodedImage + b"\r\n")
     #img = ImageGrab.grab()
     #print(screenshot)
-    with mss() as sct:
-        
+    with mss(display=":0.0") as sct:
+       
         monitor = sct.monitors[1]
+        bbox = (left,top,right,btm)
         # left = monitor["left"]
         # top = monitor["top"]
         # right = left + 1
@@ -137,7 +141,7 @@ def serve_pil_image(request):
         print("fps {}".format(1/(time()-loop)))
         response = HttpResponse(content_type='multipart/x-mixed-replace; boundary=frame')
         img.save(response, "jpeg")
-        return response
+        return response 
         
     #     yield (b'--frame\r\n'
     #    b'Content-Type:image/jpeg\r\n'
